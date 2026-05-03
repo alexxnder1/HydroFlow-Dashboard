@@ -6,7 +6,8 @@ import { keyframes } from '@emotion/react';
 
 const Tasks = ({tasks, ForceTask, getClosestTask}) => {
   function IsNextTask(task: Task): boolean {
-    return (getClosestTask() == task);
+    // return (getClosestTask() == task);
+    return false;
   }
 
   function getLowestTask(tasks: Task[]): Task | undefined {

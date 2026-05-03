@@ -6,7 +6,7 @@ import babel from '@rolldown/plugin-babel'
 export default defineConfig({
   base: "./",
   build: {
-    outDir: "../esp32/data",
+    outDir: "../HydroFlow-ESP32/data",
     emptyOutDir: true
   },
   optimizeDeps: {

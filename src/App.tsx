@@ -16,12 +16,9 @@ import Uptime from './Pages/Uptime';
 export type Task = {
   hour: number;
   minute: number;
-  day: number;
-  month: number;
-  year: number;
-  timestamp: number;
-  date: Date;
 };
+
+const STA_IP: string = "172.30.4.150";
 
 function App() {
   const [status, setStatus] = useState<boolean>(true);
@@ -73,13 +70,13 @@ function App() {
     },
   ]
   const SendLocalTimeToESP = async() => {
-    var request = `http://192.168.4.1/get_time?timestamp=${Date.now()}`;
+    var request = `http://${STA_IP}/get_time?timestamp=${Date.now()}`;
     await fetch(request)
     console.log(request)
   };  
   
   const ForceTask = async() => {
-    var request = `http://192.168.4.1/force_task`;
+    var request = `http://${STA_IP}/force_task`;
     await fetch(request)
     console.log('Force task!')
   }
@@ -103,24 +100,24 @@ function App() {
     return `${hours} hours ${minutes} minutes`;
   }
 
-  function getClosestTask(): Task | undefined {
-      const now = Date.now();
+  // function getClosestTask(): Task | undefined {
+  //     const now = Date.now();
     
-      const futureTasks = tasks.filter(task => task.timestamp > now);
+  //     const futureTasks = tasks.filter(task => task.timestamp > now);
     
-      if (futureTasks.length === 0) return undefined;
+  //     if (futureTasks.length === 0) return undefined;
     
-      return futureTasks.reduce((closest, task) =>
-        task.timestamp < closest.timestamp ? task : closest
-      );
-    }
+  //     return futureTasks.reduce((closest, task) =>
+  //       task.timestamp < closest.timestamp ? task : closest
+  //     );
+  //   }
 
-  function getClosestTaskString(): string {
-    if(tasks.length == 0)
-      return "";
+  // function getClosestTaskString(): string {
+  //   if(tasks.length == 0)
+  //     return "";
 
-    return formatDiff(getClosestTask().timestamp, (new Date()).getTime());
-  }
+  //   return formatDiff(getClosestTask()!.timestamp, (new Date()).getTime());
+  // }
 
   function getTaskWithHourMinute(hour: number, minute: number): Task {
     const today = new Date();
@@ -136,43 +133,48 @@ function App() {
   
     const t: Task = {
       hour: hour,
-      minute: minute,
-      day: date.getDate(),
-      month: date.getMonth(),
-      year: date.getFullYear(),
-      timestamp: date.getTime(),
-      date: date
+      minute: minute
     };
   
     return t;
   }
   
-  const SendTasksToESP = async() => {
-    await fetch("http://192.168.4.1/get_tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+  // const SendTasksToESP = async() => {
+  //   console.log(tasks);
 
-      body: JSON.stringify(tasks)
-    });
-    console.log(JSON.stringify(tasks));
-  };  
+  //   await fetch(`http://${STA_IP}/get_tasks`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json"
+  //     },
 
-  function AddDefaultTasks() {
-    setTasks(prev => [...prev, getTaskWithHourMinute(23,30)])
-    setTasks(prev => [...prev, getTaskWithHourMinute(12,15)])
-    setTasks(prev => [...prev, getTaskWithHourMinute(19,45)])
+  //     body: JSON.stringify(tasks)
+  //   });
+  // };  
+
+  async function GetTasksFromESP() {
+    // setTasks(prev => [...prev, getTaskWithHourMinute(23,30)])
+    // setTasks(prev => [...prev, getTaskWithHourMinute(12,15)])
+    // setTasks(prev => [...prev, getTaskWithHourMinute(19,45)])
+    // SendTasksToESP();
+    await fetch(`http://${STA_IP}/get_tasks`)
+      .then((response) => {
+        if(!response.ok)
+          throw new Error("ERORR from fetch get tasks");
+
+        return response.json();
+      })
+      .then((data) => {
+        setTasks(data.map(t => getTaskWithHourMinute(t.hour, t.minute)));
+      })
   }
 
   useEffect(() => {
-    AddDefaultTasks();
+    GetTasksFromESP();
 
     SendLocalTimeToESP();   
 
     // TODO: GetUptime();
-    
-    SendTasksToESP();
     return () => { setTasks([]); setTemp(0); setHum(0); setUptime(0) }
   }, []);
 
@@ -182,14 +184,14 @@ function App() {
       
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
         <Time/>
-        <Status status={status} setStatus={setStatus} getClosestTaskString={getClosestTaskString}/>
+        <Status status={status} setStatus={setStatus} getClosestTaskString={null}/>
         <Uptime uptime={uptime}/>
       </SimpleGrid>
 
       <br/>
 
       <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
-        <Tasks data={data_tasks} tasks={tasks} ForceTask={ForceTask} getClosestTask={getClosestTask}/>
+        <Tasks tasks={tasks} ForceTask={ForceTask} getClosestTask={null}/>
         <Temperature data={data_temp} temp={temp}/>
         <Humidity data={data_hum} hum={hum}/>
         </SimpleGrid>
