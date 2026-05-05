@@ -15,17 +15,18 @@ import Uptime from './Pages/Uptime';
 
 export type Task = {
   hour: number;
-  minute: number;
+  minute  : number;
 };
 
-const STA_IP: string = "172.30.4.150";
+// const STA_IP: string = "172.30.4.150";
+const STA_IP: string = "192.168.4.1"; 
 
 function App() {
   const [status, setStatus] = useState<boolean>(true);
-  const [tasks, setTasks] = useState<Array<Task>>([  ]);
+  const [tasks, setTasks] = useState<Array<Task>>([ {hour: 4, minute:50},{hour: 12, minute:10},{hour: 19, minute:50} ]);
   const [temp, setTemp] = useState<number>(37.3);
   const [hum, setHum] = useState<number>(50);
-  const [uptime, setUptime] = useState<number>(0);
+  const [uptime, setUptime] = useState<number>(1775001600);
 
   const data_hum = [
     {
@@ -99,26 +100,39 @@ function App() {
   
     return `${hours} hours ${minutes} minutes`;
   }
+function getClosestTask(): Task | undefined {
+  if (tasks.length === 0) return undefined;
 
-  // function getClosestTask(): Task | undefined {
-  //     const now = Date.now();
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  return tasks.reduce((closest, task) => {
+    const taskMinutes = task.hour * 60 + task.minute;
     
-  //     const futureTasks = tasks.filter(task => task.timestamp > now);
+    // Calculăm diferența. Dacă task-ul a trecut deja azi, 
+    // adunăm 1440 (minutele dintr-o zi) pentru a-l proiecta pe mâine.
+    const diffClosest = (closest.hour * 60 + closest.minute - currentMinutes + 1440) % 1440;
+    const diffTask = (taskMinutes - currentMinutes + 1440) % 1440;
+
+    return diffTask < diffClosest ? task : closest;
+  });
+}
+
+  function getClosestTaskString(): string {
+    const closest = getClosestTask();
+    if (!closest) return "";
+
+    const now = new Date();
+    const taskDate = new Date();
     
-  //     if (futureTasks.length === 0) return undefined;
-    
-  //     return futureTasks.reduce((closest, task) =>
-  //       task.timestamp < closest.timestamp ? task : closest
-  //     );
-  //   }
+    taskDate.setHours(closest.hour, closest.minute, 0, 0);
 
-  // function getClosestTaskString(): string {
-  //   if(tasks.length == 0)
-  //     return "";
+    if (taskDate.getTime() <= now.getTime()) {
+      taskDate.setDate(taskDate.getDate() + 1);
+    }
 
-  //   return formatDiff(getClosestTask()!.timestamp, (new Date()).getTime());
-  // }
-
+    return formatDiff(taskDate.getTime(), now.getTime());
+  }
   function getTaskWithHourMinute(hour: number, minute: number): Task {
     const today = new Date();
     const date = new Date(
@@ -179,19 +193,19 @@ function App() {
   }, []);
 
   return (
-    <Box p={50} minH="100vh" backgroundColor="#c8cfe3">
+    <Box p={8} minH="100vh" backgroundColor="#c8cfe3">
       <Heading color="black" fontSize={30} mb={20}>HydroFlow Dashboard</Heading>
       
       <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
         <Time/>
-        <Status status={status} setStatus={setStatus} getClosestTaskString={null}/>
+        <Status status={status} setStatus={setStatus} getClosestTaskString={getClosestTaskString}/>
         <Uptime uptime={uptime}/>
       </SimpleGrid>
 
       <br/>
 
       <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
-        <Tasks tasks={tasks} ForceTask={ForceTask} getClosestTask={null}/>
+        <Tasks tasks={tasks} ForceTask={ForceTask} getClosestTask={getClosestTask}/>
         <Temperature data={data_temp} temp={temp}/>
         <Humidity data={data_hum} hum={hum}/>
         </SimpleGrid>

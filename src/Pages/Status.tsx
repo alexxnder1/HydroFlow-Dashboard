@@ -8,7 +8,7 @@ const Status = ({status, setStatus, getClosestTaskString}) => {
   return (
     <ImprovedCard
     //  ${getClosestTaskString() ?? "null"}` : "Idle"}
-          title="Status" description={status == true ? `Next task in ` : "Idle"}
+          title="Status" description={status == true ? `Next task in ${getClosestTaskString()}` : "Idle"}
           buttonColor={status == true ? "red" : "green"}  color={status == false ? "red" : "green"}  
           buttonText={status == false ? "Start" : "Idle"}
           onClick={() => setStatus(!status)}
