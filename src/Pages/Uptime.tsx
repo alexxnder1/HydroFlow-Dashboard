@@ -1,5 +1,9 @@
+import { useEffect, useState } from "react";
 import ImprovedCard from "../Components/ImprovedCard";
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import { STA_IP, STA_MODE } from "../App";
+import LoadingElement from "../Components/Loading";
+import { getClosestTaskString, getRelativeTimeString } from "./Tasks";
 
 interface FormattedTimestamp {
   days: number,
@@ -7,7 +11,11 @@ interface FormattedTimestamp {
   minutes: number,
 }
 
-const Uptime = ({uptime}) => {
+interface Uptime {
+  uptime: string
+}
+
+const Uptime = ({uptime, setUptime}) => {
   const GetFormattedTimestamp = (timestamp): FormattedTimestamp => {
     const t1 = new Date().getTime();
     const t2 = timestamp;
@@ -39,13 +47,50 @@ const GetFormattedString = (since: number) => {
     return formattedParts.join(" ");
   };
 
-  return (
-    <ImprovedCard
-          title="Uptime" description={`${GetFormattedString(uptime)}`}
-          color="DarkTurquoise" 
-          icon={<HourglassEmptyIcon sx={{ fontSize: 40 }}/>}
-    />
+  const [loaded, setLoaded] = useState<boolean>(STA_MODE ? true : false);
+  const [uptimeString, setUptimeString] = useState("");
+  
+  
+  useEffect(() => {
+    const fetchData = async() => {
+      var request = `http://${STA_IP}/get_uptime`;
+      await fetch(request)
+        .then((response) => {
+            if(!response.ok)
+              throw new Error("ERROR fetching Uptime of esp32 Server.");
 
+            return response.json();
+        })
+        .then((data: Uptime) => {
+          setUptime(data);
+          setLoaded(true);
+        })
+    }
+    fetchData();
+
+    const f = () => {setUptimeString(getRelativeTimeString(uptime));};
+   
+    f();
+   
+    const timer = setInterval(f, 1000*5);
+    
+    return () => {setUptime(0); clearInterval(timer);}
+  }, []);
+
+  return (
+    <>
+      {
+        loaded
+        ?
+          <ImprovedCard
+                title="Uptime" description={`${uptimeString}`}
+                color="DarkTurquoise" 
+                icon={<HourglassEmptyIcon sx={{ fontSize: 40 }}/>}
+          />
+        :
+        <LoadingElement/>
+      }
+    </>
   )  
 };
 

@@ -1,12 +1,19 @@
+import { useEffect, useState } from "react";
 import ImprovedCard from "../Components/ImprovedCard";
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 
-const Time = () => {
+const Time = ({timestamp, setTimestamp}) => {
+  useEffect(() => {
+      const timer = setInterval(() => {
+        setTimestamp(new Date());
+      }, 1000*5);
+      return () => clearInterval(timer);
+  });
+  
   return (
     <ImprovedCard
-          title="Time" description={`${String(new Date().getHours()).padStart(2, "0")}:${String(new Date().getMinutes()).padStart(2, "0")}`}
-          buttonColor="blue"  color="white" 
-          buttonText="Update Time from This Device"
+          title="Time" description={`${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`}
+          color="white" 
           icon={<AccessTimeFilledIcon sx={{ fontSize: 40 }}/>}
     />
 

@@ -1,31 +1,97 @@
 import { Box, HStack, Stack, Text, VStack} from '@chakra-ui/react';
 import ImprovedCard from '../Components/ImprovedCard';
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate'
-import type { Task } from '../App';
 import { keyframes } from '@emotion/react';
 
-const Tasks = ({tasks, ForceTask, getClosestTask}) => {
-  function IsNextTask(task: Task): boolean {
-    // return (getClosestTask() == task);
-    return false;
+export type Task = {
+  hour: number;
+  minute  : number;
+};
+
+export function getRelativeTimeString(targetMs: number, relativeToMs: number = Date.now()): string {
+  const diffMs = Math.abs(targetMs - relativeToMs);
+  
+  const totalMinutes = Math.floor(diffMs / (1000 * 60));
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  if (hours === 0) return `${minutes} minutes`;
+  if (minutes === 0) return `${hours} hours`;
+
+  return `${hours} hours ${minutes} minutes`;
+}
+
+export function getClosestTaskString(tasks: Task[]): string {
+  const closest = getClosestTask(tasks);
+  
+  if (!closest) return "";
+
+  const now = new Date();
+  const taskDate = new Date();
+  
+  taskDate.setHours(closest.hour, closest.minute, 0, 0);
+
+  if (taskDate.getTime() <= now.getTime()) {
+    taskDate.setDate(taskDate.getDate() + 1);
   }
 
-  function getLowestTask(tasks: Task[]): Task | undefined {
-    if (!tasks.length) return undefined;
+  return getRelativeTimeString(taskDate.getTime(), now.getTime());
+}
+
+function IsNextTask(task: Task): boolean {
+  // return (getClosestTask() == task);
+  return false;
+}
+function formatDiff(ts1: number, ts2: number): string {
+    const { hours, minutes } = getTimeDifference(ts1, ts2);
   
-    return tasks.reduce((min, t) =>
-      t.hour < min.hour ? t : min
-    );
+    if (hours === 0) return `${minutes} minutes`;
+    if (minutes === 0) return `${hours} hours`;
+  
+    return `${hours} hours ${minutes} minutes`;
+  }
+function getClosestTask(tasks): Task | undefined {
+    if (tasks.length === 0) return undefined;
+
+    const now = new Date();
+    const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+    return tasks.reduce((closest, task) => {
+      const taskMinutes = task.hour * 60 + task.minute;
+      
+      const diffClosest = (closest.hour * 60 + closest.minute - currentMinutes + 1440) % 1440;
+      const diffTask = (taskMinutes - currentMinutes + 1440) % 1440;
+
+      return diffTask < diffClosest ? task : closest;
+    });
   }
   
-  function getHighestTask(tasks: Task[]): Task | undefined {
-    if (!tasks.length) return undefined;
+  function getTimeDifference(ts1: number, ts2: number) {
+    const diffMs = Math.abs(ts2 - ts1); // safe for any order
   
-    return tasks.reduce((max, t) =>
-      t.hour > max.hour ? t : max
-    );
+    const totalMinutes = Math.floor(diffMs / (1000 * 60));
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+  
+    return { hours, minutes };
   }
-  
+
+function getLowestTask(tasks: Task[]): Task | undefined {
+  if (!tasks.length) return undefined;
+
+  return tasks.reduce((min, t) =>
+    t.hour < min.hour ? t : min
+  );
+}
+function getHighestTask(tasks: Task[]): Task | undefined {
+  if (!tasks.length) return undefined;
+
+  return tasks.reduce((max, t) =>
+    t.hour > max.hour ? t : max
+  );
+}
+ 
+const Tasks = ({tasks, ForceTask}) => {
   const pulse = keyframes`
     0% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.1); opacity: 0.6; }

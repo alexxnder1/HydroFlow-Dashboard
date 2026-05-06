@@ -1,4 +1,4 @@
-import { Box, Heading, Text, SimpleGrid } from '@chakra-ui/react'
+import { Box, Heading, Text, SimpleGrid, Button, Spinner, Center, AbsoluteCenter } from '@chakra-ui/react'
 
 import { useEffect, useState } from "react";
 
@@ -10,23 +10,25 @@ import Time from './Pages/Time';
 import Status from './Pages/Status';
 import Humidity from './Pages/Humidity';
 import Temperature from './Pages/Temperature';
-import Tasks from './Pages/Tasks';
+import Tasks, { type Task } from './Pages/Tasks';
 import Uptime from './Pages/Uptime';
+import LoadingElement from './Components/Loading';
 
-export type Task = {
-  hour: number;
-  minute  : number;
-};
+export const STA_MODE: boolean = false;
 
-// const STA_IP: string = "172.30.4.150";
-const STA_IP: string = "192.168.4.1"; 
+export const STA_IP: string = STA_MODE ? "172.30.4.186" : "192.168.4.1"; 
+// const STA_IP: string = "192.168.4.1"; 
 
 function App() {
   const [status, setStatus] = useState<boolean>(true);
-  const [tasks, setTasks] = useState<Array<Task>>([ {hour: 4, minute:50},{hour: 12, minute:10},{hour: 19, minute:50} ]);
+  const [tasks, setTasks] = useState<Array<Task>>([ {hour: 18, minute: 30}]);
   const [temp, setTemp] = useState<number>(37.3);
   const [hum, setHum] = useState<number>(50);
-  const [uptime, setUptime] = useState<number>(1775001600);
+  const [uptime, setUptime] = useState<string>("1777939200000");
+
+  const [loaded, setLoading] = useState<boolean>(STA_MODE ? true : false);
+  
+  const [timestamp, setTimestamp] = useState(new Date());
 
   const data_hum = [
     {
@@ -73,65 +75,18 @@ function App() {
   const SendLocalTimeToESP = async() => {
     var request = `http://${STA_IP}/get_time?timestamp=${Date.now()}`;
     await fetch(request)
-    console.log(request)
+      .then((response) => {
+        if(!response.ok)
+          throw new Error("ERORR from fetch local time.");
+
+        return response.json();
+      })
   };  
   
   const ForceTask = async() => {
     var request = `http://${STA_IP}/force_task`;
     await fetch(request)
     console.log('Force task!')
-  }
-
-  function getTimeDifference(ts1: number, ts2: number) {
-    const diffMs = Math.abs(ts2 - ts1); // safe for any order
-  
-    const totalMinutes = Math.floor(diffMs / (1000 * 60));
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-  
-    return { hours, minutes };
-  }
-
-  function formatDiff(ts1: number, ts2: number): string {
-    const { hours, minutes } = getTimeDifference(ts1, ts2);
-  
-    if (hours === 0) return `${minutes} minutes`;
-    if (minutes === 0) return `${hours} hours`;
-  
-    return `${hours} hours ${minutes} minutes`;
-  }
-function getClosestTask(): Task | undefined {
-  if (tasks.length === 0) return undefined;
-
-  const now = new Date();
-  const currentMinutes = now.getHours() * 60 + now.getMinutes();
-
-  return tasks.reduce((closest, task) => {
-    const taskMinutes = task.hour * 60 + task.minute;
-    
-    // Calculăm diferența. Dacă task-ul a trecut deja azi, 
-    // adunăm 1440 (minutele dintr-o zi) pentru a-l proiecta pe mâine.
-    const diffClosest = (closest.hour * 60 + closest.minute - currentMinutes + 1440) % 1440;
-    const diffTask = (taskMinutes - currentMinutes + 1440) % 1440;
-
-    return diffTask < diffClosest ? task : closest;
-  });
-}
-
-  function getClosestTaskString(): string {
-    const closest = getClosestTask();
-    if (!closest) return "";
-
-    const now = new Date();
-    const taskDate = new Date();
-    
-    taskDate.setHours(closest.hour, closest.minute, 0, 0);
-
-    if (taskDate.getTime() <= now.getTime()) {
-      taskDate.setDate(taskDate.getDate() + 1);
-    }
-
-    return formatDiff(taskDate.getTime(), now.getTime());
   }
   function getTaskWithHourMinute(hour: number, minute: number): Task {
     const today = new Date();
@@ -180,6 +135,7 @@ function getClosestTask(): Task | undefined {
       })
       .then((data) => {
         setTasks(data.map(t => getTaskWithHourMinute(t.hour, t.minute)));
+        setLoading(true);
       })
   }
 
@@ -189,26 +145,34 @@ function getClosestTask(): Task | undefined {
     SendLocalTimeToESP();   
 
     // TODO: GetUptime();
-    return () => { setTasks([]); setTemp(0); setHum(0); setUptime(0) }
+    return () => { setTasks([]); setTemp(0); setHum(0); setUptime(""); setLoading(false) }
   }, []);
 
   return (
     <Box p={8} minH="100vh" backgroundColor="#c8cfe3">
-      <Heading color="black" fontSize={30} mb={20}>HydroFlow Dashboard</Heading>
-      
-      <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
-        <Time/>
-        <Status status={status} setStatus={setStatus} getClosestTaskString={getClosestTaskString}/>
-        <Uptime uptime={uptime}/>
-      </SimpleGrid>
+      {
+        !loaded
+        ?
+          <LoadingElement/>
+        :
+        <>
+          <Heading color="black" fontSize={30} mb={20}>HydroFlow Dashboard</Heading>
+          
+          <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
+            <Time timestamp={timestamp} setTimestamp={setTimestamp}/>
+            <Status tasks={tasks} status={status} setStatus={setStatus}/>
+            <Uptime uptime={uptime} setUptime={setUptime}/>
+          </SimpleGrid>
 
-      <br/>
+          <br/>
 
-      <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
-        <Tasks tasks={tasks} ForceTask={ForceTask} getClosestTask={getClosestTask}/>
-        <Temperature data={data_temp} temp={temp}/>
-        <Humidity data={data_hum} hum={hum}/>
-        </SimpleGrid>
+          <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
+            <Tasks tasks={tasks} ForceTask={ForceTask}/>
+            <Temperature data={data_temp} temp={temp}/>
+            <Humidity data={data_hum} hum={hum}/>
+          </SimpleGrid>
+        </>
+      }
     </Box>
   )
 }
