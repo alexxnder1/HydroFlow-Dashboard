@@ -14,7 +14,21 @@ interface FormattedTimestamp {
 interface Uptime {
   uptime: string
 }
+const formatUptime = (ms: number) => {
+  const totalMinutes = Math.floor(ms / 1000 / 60);
 
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+  const minutes = totalMinutes % 60;
+
+  const parts: string[] = [];
+
+  if (days > 0) parts.push(`${days} days`);
+  if (hours > 0) parts.push(`${hours} hours`);
+  if (minutes > 0) parts.push(`${minutes} minutes`);
+
+  return parts.length > 0 ? parts.join(" ") : "0 minutes";
+};
 const Uptime = ({uptime, setUptime}) => {
   const GetFormattedTimestamp = (timestamp): FormattedTimestamp => {
     const t1 = new Date().getTime();
@@ -52,6 +66,7 @@ const GetFormattedString = (since: number) => {
   
   
   useEffect(() => {
+    var timer: any = null;
     const fetchData = async() => {
       var request = `http://${STA_IP}/get_uptime`;
       await fetch(request)
@@ -62,19 +77,15 @@ const GetFormattedString = (since: number) => {
             return response.json();
         })
         .then((data: Uptime) => {
-          setUptime(data);
+          setUptime(data.uptime);
           setLoaded(true);
+          setUptimeString(formatUptime(parseInt( data.uptime)));
         })
     }
     fetchData();
+    timer = setInterval(fetchData, 1000*5);
 
-    const f = () => {setUptimeString(getRelativeTimeString(uptime));};
-   
-    f();
-   
-    const timer = setInterval(f, 1000*5);
-    
-    return () => {setUptime(0); clearInterval(timer);}
+    return () => {  setUptime(0); if(timer != null) clearInterval(timer);}
   }, []);
 
   return (

@@ -30,7 +30,15 @@ const ImprovedCard = (props: any) => {
                 :
                 <></>
               }
-              
+              {
+                !(props.secondButtonColor == undefined && props.secondButtonText == undefined)
+                ?
+                <Button onClick={props.secondOnClick} backgroundColor={props.secondButtonColor}>
+                  {props.secondButtonText}
+                </Button>
+                :
+                <></>
+              }
             </CardFooter>
         </Card.Root>
     )

@@ -1,4 +1,4 @@
-import { Box, Heading, Text, SimpleGrid, Button, Spinner, Center, AbsoluteCenter } from '@chakra-ui/react'
+import { Box, Heading, Text, SimpleGrid, Button, Spinner, Center, AbsoluteCenter, Input } from '@chakra-ui/react'
 
 import { useEffect, useState } from "react";
 
@@ -14,20 +14,38 @@ import Tasks, { type Task } from './Pages/Tasks';
 import Uptime from './Pages/Uptime';
 import LoadingElement from './Components/Loading';
 
-export const STA_MODE: boolean = false;
+export const STA_MODE: boolean = true;
 
 export const STA_IP: string = STA_MODE ? "172.30.4.186" : "192.168.4.1"; 
 // const STA_IP: string = "192.168.4.1"; 
+export function createTask(hour: number, minute: number): Task {
+  const today = new Date();
+  const date = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate(),
+    hour,
+    minute,
+    0,
+    0
+  );
 
+  const t: Task = {
+    hour: hour,
+    minute: minute
+  };
+
+  return t;
+}
 function App() {
   const [status, setStatus] = useState<boolean>(true);
-  const [tasks, setTasks] = useState<Array<Task>>([ {hour: 18, minute: 30}]);
+  const [tasks, setTasks] = useState<Array<Task>>([]);
   const [temp, setTemp] = useState<number>(37.3);
   const [hum, setHum] = useState<number>(50);
-  const [uptime, setUptime] = useState<string>("1777939200000");
+  const [uptime, setUptime] = useState<string>("");
 
-  const [loaded, setLoading] = useState<boolean>(STA_MODE ? true : false);
-  
+  const [loaded, setLoading] = useState<boolean>(true);
+
   const [timestamp, setTimestamp] = useState(new Date());
 
   const data_hum = [
@@ -88,44 +106,9 @@ function App() {
     await fetch(request)
     console.log('Force task!')
   }
-  function getTaskWithHourMinute(hour: number, minute: number): Task {
-    const today = new Date();
-    const date = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate(),
-      hour,
-      minute,
-      0,
-      0
-    );
-  
-    const t: Task = {
-      hour: hour,
-      minute: minute
-    };
-  
-    return t;
-  }
-  
-  // const SendTasksToESP = async() => {
-  //   console.log(tasks);
 
-  //   await fetch(`http://${STA_IP}/get_tasks`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json"
-  //     },
-
-  //     body: JSON.stringify(tasks)
-  //   });
-  // };  
 
   async function GetTasksFromESP() {
-    // setTasks(prev => [...prev, getTaskWithHourMinute(23,30)])
-    // setTasks(prev => [...prev, getTaskWithHourMinute(12,15)])
-    // setTasks(prev => [...prev, getTaskWithHourMinute(19,45)])
-    // SendTasksToESP();
     await fetch(`http://${STA_IP}/get_tasks`)
       .then((response) => {
         if(!response.ok)
@@ -134,7 +117,7 @@ function App() {
         return response.json();
       })
       .then((data) => {
-        setTasks(data.map(t => getTaskWithHourMinute(t.hour, t.minute)));
+        setTasks(data.map(t => createTask(t.hour, t.minute)));
         setLoading(true);
       })
   }
@@ -147,13 +130,15 @@ function App() {
     // TODO: GetUptime();
     return () => { setTasks([]); setTemp(0); setHum(0); setUptime(""); setLoading(false) }
   }, []);
+  const [time, setTime] = useState("12:00");
 
   return (
     <Box p={8} minH="100vh" backgroundColor="#c8cfe3">
       {
         !loaded
         ?
-          <LoadingElement/>
+        // <LoadingElement/>
+        <></>
         :
         <>
           <Heading color="black" fontSize={30} mb={20}>HydroFlow Dashboard</Heading>
@@ -167,7 +152,7 @@ function App() {
           <br/>
 
           <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
-            <Tasks tasks={tasks} ForceTask={ForceTask}/>
+            <Tasks tasks={tasks} setTasks={setTasks} ForceTask={ForceTask}/>
             <Temperature data={data_temp} temp={temp}/>
             <Humidity data={data_hum} hum={hum}/>
           </SimpleGrid>

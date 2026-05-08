@@ -1,7 +1,10 @@
-import { Box, HStack, Stack, Text, VStack} from '@chakra-ui/react';
+import { Box, Button, HStack, Stack, Text, VStack} from '@chakra-ui/react';
 import ImprovedCard from '../Components/ImprovedCard';
 import AssignmentLateIcon from '@mui/icons-material/AssignmentLate'
 import { keyframes } from '@emotion/react';
+import { useEffect, useState } from 'react';
+import AddTaskMenu from './AddTaskMenu';
+import { STA_IP } from '../App';
 
 export type Task = {
   hour: number;
@@ -38,18 +41,15 @@ export function getClosestTaskString(tasks: Task[]): string {
   return getRelativeTimeString(taskDate.getTime(), now.getTime());
 }
 
-function IsNextTask(task: Task): boolean {
-  // return (getClosestTask() == task);
-  return false;
-}
 function formatDiff(ts1: number, ts2: number): string {
-    const { hours, minutes } = getTimeDifference(ts1, ts2);
-  
-    if (hours === 0) return `${minutes} minutes`;
-    if (minutes === 0) return `${hours} hours`;
-  
-    return `${hours} hours ${minutes} minutes`;
-  }
+  const { hours, minutes } = getTimeDifference(ts1, ts2);
+
+  if (hours === 0) return `${minutes} minutes`;
+  if (minutes === 0) return `${hours} hours`;
+
+  return `${hours} hours ${minutes} minutes`;
+}
+
 function getClosestTask(tasks): Task | undefined {
     if (tasks.length === 0) return undefined;
 
@@ -91,16 +91,43 @@ function getHighestTask(tasks: Task[]): Task | undefined {
   );
 }
  
-const Tasks = ({tasks, ForceTask}) => {
+const Tasks = ({tasks, setTasks, ForceTask}) => {
   const pulse = keyframes`
     0% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.1); opacity: 0.6; }
     100% { transform: scale(1); opacity: 1; }
   `;
+useEffect(() => {
+  console.log("Tasks s-au schimbat:", tasks);
+}, [tasks]);
+  const color = "#5a79cd";
+  
+  const [addTaskMenu, setAddTaskMenu] = useState<boolean>(false);
 
-  const color = "#6A5ACD";
+  const DeleteTask = async (task: Task) => {
+    var request = `http://${STA_IP}/delete_task?hour=${task.hour}&minute=${task.minute}`;
+    await fetch(request)
+      .then((response) => {
+        if(!response.ok)
+          throw new Error("ERORR from deleting a task.");
+
+        return response.json();
+      })
+      .then(() => {
+        setTasks(prev => {
+            var filtr = prev.filter(t =>
+              !(t.hour === task.hour && t.minute === task.minute)
+            )
+            return [...filtr];
+          }
+        );
+        console.log(tasks)
+      });
+  };  
 
   return (
+    <>
+    
     <ImprovedCard
       title="Tasks" description={ 
         <Box position="relative" w="100%" py={6}>
@@ -116,18 +143,17 @@ const Tasks = ({tasks, ForceTask}) => {
         />
           <HStack marginTop={20} justify="space-between" align="center">
             {
-              tasks.sort((a,b) => a.timestamp-b.timestamp).map((t, id) => {
+              [...tasks].sort((a, b) =>
+                  a.hour * 60 + a.minute - (b.hour * 60 + b.minute)
+              )
+              .map((t, id) => {
                 return (
-                  <>
-                    <VStack zIndex={2} key={id}>
-                      <Text position={"absolute"} top={IsNextTask(t) ? 30 : 50} fontSize={IsNextTask(t) ? 40 : 25}>{t.hour}:{t.minute}</Text>
-                      <Box w="12px" h="12px" borderRadius="full" border="10px  solid" borderColor={`${IsNextTask(t) ? "#663399": color}`}/> 
-                      
-                      <Box marginTop={5} borderRadius="10%" paddingInline={3} paddingBlock={1} backgroundColor={IsNextTask(t) ? '#2E8B57' : '#708090'} border="1px solid">
-                        <Text color="white" fontSize={IsNextTask(t) ? 15 : 15}>{IsNextTask(t) ? 'Upcoming' : 'Scheduled'}</Text>
-                      </Box>
+                    <VStack zIndex={2} key={`${t.hour}-${t.minute}`}>
+                      <Text position={"absolute"} top={50} fontSize={25}>{String(t.hour).padStart(2,"0")}:{String(t.minute).padStart(2,"0")}</Text>
+                      <Box w="12px" h="12px" borderRadius="full" border="10px  solid" borderColor={'blue'}/> 
+                     
+                      <Button onClick={() => {DeleteTask(t)}} color="white" marginTop={2} bg={'red.500'} fontSize={15}>{'Delete'}</Button>
                     </VStack>
-                  </>
                 )
               })
               
@@ -138,8 +164,19 @@ const Tasks = ({tasks, ForceTask}) => {
         buttonColor={color}  color={color}
         buttonText="Force Task"
         onClick={() => {ForceTask()}}
+
+        secondButtonColor={"#0039d6"}  secondColor={color}
+        secondButtonText="Add Task"
+        secondOnClick={() => {setAddTaskMenu(true)}}
+        
         icon={<AssignmentLateIcon sx={{ fontSize: 40 }}/>}
       />
+      {
+        addTaskMenu
+        &&
+        <AddTaskMenu setTasks={setTasks} setAddTaskMenu={setAddTaskMenu}/>
+      }
+    </>
   )  
 };
 

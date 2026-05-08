@@ -21,6 +21,8 @@
     "@nivo/line": "^0.99.0",
     "@nivo/pie": "^0.99.0",
     "@nivo/scatterplot": "^0.99.0",
+    "chakra-time-picker": "^1.1.2",
+    "chakra-ui-simple-time-picker": "^1.1.7",
     "dotenv": "^17.4.2",
     "framer-motion": "^12.38.0",
     "lodash": "^4.18.1",
