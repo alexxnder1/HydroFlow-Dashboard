@@ -25,20 +25,29 @@ export function getRelativeTimeString(targetMs: number, relativeToMs: number = D
 }
 
 export function getClosestTaskString(tasks: Task[]): string {
-  const closest = getClosestTask(tasks);
-  
-  if (!closest) return "";
+  if (!tasks || tasks.length === 0) return "";
 
   const now = new Date();
-  const taskDate = new Date();
   
-  taskDate.setHours(closest.hour, closest.minute, 0, 0);
+  const upcomingTasks = tasks.map(task => {
+    const runDate = new Date();
+    runDate.setHours(task.hour, task.minute, 0, 0);
 
-  if (taskDate.getTime() <= now.getTime()) {
-    taskDate.setDate(taskDate.getDate() + 1);
-  }
+    if (runDate.getTime() <= now.getTime()) {
+      runDate.setDate(runDate.getDate() + 1);
+    }
+    
+    return {
+      ...task,
+      nextRunTime: runDate.getTime()
+    };
+  });
 
-  return getRelativeTimeString(taskDate.getTime(), now.getTime());
+  upcomingTasks.sort((a, b) => a.nextRunTime - b.nextRunTime);
+
+  const closest = upcomingTasks[0];
+
+  return getRelativeTimeString(closest.nextRunTime, now.getTime());
 }
 
 function formatDiff(ts1: number, ts2: number): string {
@@ -111,7 +120,7 @@ useEffect(() => {
         if(!response.ok)
           throw new Error("ERORR from deleting a task.");
 
-        return response.json();
+        return response.text();
       })
       .then(() => {
         setTasks(prev => {

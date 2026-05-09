@@ -1,4 +1,4 @@
-import { Box, Button, Input, Text } from "@chakra-ui/react";
+import { Box, Button, Input, Text, VStack } from "@chakra-ui/react";
 import { useState } from "react";
 import type { Task } from "./Tasks";
 import { createTask, STA_IP } from "../App";
@@ -42,52 +42,105 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
             .catch((err) => {
                 console.error("ERR: ", err);
             });
-
     };  
     
     return (
-        <Box 
+        <Box
             position="fixed"
             left="0"
-            top="0" 
-            w="100vw" 
-            h="100vh" 
-            zIndex={6767} 
+            top="0"
+            w="100vw"
+            h="100vh"
+            zIndex={6767}
             bg="rgba(0,0,0,0.6)"
             color="white"
-            backdropFilter={'blur(10px)'}>
-            
-            <Box
+            backdropFilter={'blur(10px)'}
+        >
+            <VStack
                 position="absolute"
-                top="50%"
                 left="50%"
-                transform="translate(-50%, -50%)"
-                bg="#111827"
+                top="50%"
+                transform={"translate(-50%, -50%)"}
+                width={{ base: "90%", md: "50%", lg: "25%" }}
                 p={5}
                 borderRadius="2xl"
-                minW={{ base: "40%", sm: "80%", md: "40%" }}
-                boxShadow="0 20px 60px rgba(0,0,0,0.5)">
+                bg="transparent"
+                gap={4}
+            >
+                <Text fontSize={{ base: 24, md: 22 }} fontWeight={"bold"}>
+                    Pick Task Hour
+                </Text>
+
+                <Box position="relative" width="100%" h="50px">
                     
-                <Box>
-                    <Text>Pick Task Hour</Text>
+                    <Box
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        right={0}
+                        bottom={0}
+                        bg="#f0f0f0"
+                        borderRadius="md"
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        px={4}
+                        zIndex={1}
+                        border="1px solid #ccc"
+                    >
+                        <Text color="black" fontSize="18px">
+                            {task 
+                                ? `${String(task.hour).padStart(2, "0")}:${String(task.minute).padStart(2, "0")}` 
+                                : "--:--"}
+                        </Text>
+                        <Text fontSize="20px">🕒</Text>
+                    </Box>
+
                     <Input
                         type="time"
-                        value= {
-                            task
-                            ? `${String(task.hour).padStart(2,"0")}:${String(task.minute).padStart(2,"0")}`
-                            : ""
-                        }
-                        onChange={(e) => {setTask(ReturnTaskFromString(e.target.value))}}
-                        size="md"
-                        style={{ marginTop:"10px", color: 'black', backgroundColor: '#f0f0f0' }} 
+                        value={task ? `${String(task.hour).padStart(2, "0")}:${String(task.minute).padStart(2, "0")}` : ""}
+                        onChange={(e) => {
+                            if (e.target.value) {
+                                setTask(ReturnTaskFromString(e.target.value));
+                            }
+                        }}
+                        position="absolute"
+                        top={0}
+                        left={0}
+                        width="100%"
+                        height="100%"
+                        opacity={0}
+                        zIndex={2}  
+                        style={{ 
+                            WebkitAppearance: "none",
+                            cursor: "pointer"
+                        }}
                     />
                 </Box>
-                
-                <Box display={"flex"} justifyContent={"flex-end"} mt={5} onClick={() => { setAddTaskMenu(false); SendTask();}}>
-                    <Button  display='flex' justifyContent='flex-end' right={0} color="white" bg="green">Add</Button>
+
+                <Box display={"flex"} width="100%" justifyContent={"center"} mt={2}>
+                    <Button
+                        colorScheme="green"
+                        width="100%"
+                        onClick={() => {
+                            if (task) {
+                                SendTask();
+                                setAddTaskMenu(false);
+                            }
+                        }}
+                    >
+                        Add Task
+                    </Button>
                 </Box>
-            </Box>
-            
+                
+                <Button 
+                    variant="ghost" 
+                    color="whiteAlpha.800" 
+                    onClick={() => setAddTaskMenu(false)}
+                >
+                    Cancel
+                </Button>
+            </VStack>
         </Box>
     );
 };

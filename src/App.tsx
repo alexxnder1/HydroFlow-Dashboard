@@ -97,7 +97,7 @@ function App() {
         if(!response.ok)
           throw new Error("ERORR from fetch local time.");
 
-        return response.json();
+        return response.text();
       })
   };  
   
