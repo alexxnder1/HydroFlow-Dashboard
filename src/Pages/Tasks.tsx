@@ -100,18 +100,29 @@ function getHighestTask(tasks: Task[]): Task | undefined {
   );
 }
  
-const Tasks = ({tasks, setTasks, ForceTask}) => {
+const Tasks = ({tasks, setTasks, ForceTask, taskDuration}) => {
   const pulse = keyframes`
     0% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.1); opacity: 0.6; }
     100% { transform: scale(1); opacity: 1; }
   `;
-useEffect(() => {
-  console.log("Tasks s-au schimbat:", tasks);
-}, [tasks]);
+
   const color = "#5a79cd";
   
+  const [skipping, setSkipping] = useState<Task | null>(null);
   const [addTaskMenu, setAddTaskMenu] = useState<boolean>(false);
+
+  const StopTask = async(task: Task) => {
+    var request = `http://${STA_IP}/stop_task?hour=${task.hour}&minute=${task.minute}`;
+    await fetch(request)
+      .then((response) => {
+        if(!response.ok)
+          throw new Error("ERORR from stopping a task.");
+
+        setSkipping(task);
+        return response.text();
+      });
+  }
 
   const DeleteTask = async (task: Task) => {
     var request = `http://${STA_IP}/delete_task?hour=${task.hour}&minute=${task.minute}`;
@@ -134,6 +145,22 @@ useEffect(() => {
       });
   };  
 
+  function IsNextTask(t: Task)
+  {
+    return (getClosestTask(tasks) == t)
+  }
+
+  function IsTaskRunning(t: Task): boolean {
+    const now = new Date();
+    const acumS = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
+    const startS = (t.hour * 3600) + (t.minute * 60);
+    const durataS = taskDuration / 1000; 
+    const sfarsitS = startS + durataS;
+
+    if (skipping && skipping.hour === t.hour && skipping.minute === t.minute) return false;
+
+    return acumS >= startS && acumS < sfarsitS;
+  }
   return (
     <>
     
@@ -158,14 +185,13 @@ useEffect(() => {
               .map((t, id) => {
                 return (
                     <VStack zIndex={2} key={`${t.hour}-${t.minute}`}>
-                      <Text position={"absolute"} top={50} fontSize={25}>{String(t.hour).padStart(2,"0")}:{String(t.minute).padStart(2,"0")}</Text>
+                      <Text color={IsNextTask(t) ? "green" : "gray"} position={"absolute"} top={50} fontSize={25}>{String(t.hour).padStart(2,"0")}:{String(t.minute).padStart(2,"0")}</Text>
                       <Box w="12px" h="12px" borderRadius="full" border="10px  solid" borderColor={'blue'}/> 
                      
-                      <Button onClick={() => {DeleteTask(t)}} color="white" marginTop={2} bg={'red.500'} fontSize={15}>{'Delete'}</Button>
+                      <Button onClick={() => {IsTaskRunning(t) ? StopTask(t) : DeleteTask(t)}} color="white" marginTop={2} bg={IsTaskRunning(t) ? "red.500" : 'gray.500'} fontSize={15}>{IsTaskRunning(t) ? "Stop" : "Delete"}</Button>
                     </VStack>
                 )
               })
-              
             }
             </HStack>
         </Box>

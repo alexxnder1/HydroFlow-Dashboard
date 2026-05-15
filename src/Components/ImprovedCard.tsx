@@ -18,6 +18,10 @@ const ImprovedCard = (props: any) => {
 
             }
 
+            {
+              props?.content
+            }
+
           </CardBody>
 
             <CardFooter justifyContent={'flex-end'}>

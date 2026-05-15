@@ -1,4 +1,4 @@
-import { Box, Button, Input, Text, VStack } from "@chakra-ui/react";
+import { Text, VStack, Box, Button, Input } from "@chakra-ui/react";
 import { useState } from "react";
 import type { Task } from "./Tasks";
 import { createTask, STA_IP } from "../App";
@@ -10,7 +10,6 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
         const spliced: string[] = str.split(":");
         return { hour: Math.trunc(parseInt(spliced[0])), minute: Math.trunc(parseInt(spliced[1])) };
     };
-
     const SendTask = async() => {
         if(task  == undefined)
         {
@@ -65,7 +64,7 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
                 p={5}
                 borderRadius="2xl"
                 bg="transparent"
-                gap={4}
+                gap={5}
             >
                 <Text fontSize={{ base: 24, md: 22 }} fontWeight={"bold"}>
                     Pick Task Hour

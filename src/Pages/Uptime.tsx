@@ -3,7 +3,6 @@ import ImprovedCard from "../Components/ImprovedCard";
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import { STA_IP, STA_MODE } from "../App";
 import LoadingElement from "../Components/Loading";
-import { getClosestTaskString, getRelativeTimeString } from "./Tasks";
 
 interface FormattedTimestamp {
   days: number,

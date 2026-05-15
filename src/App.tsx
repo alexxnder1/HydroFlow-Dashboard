@@ -3,9 +3,6 @@ import { Box, Heading, Text, SimpleGrid, Button, Spinner, Center, AbsoluteCenter
 import { useEffect, useState } from "react";
 
 // Components
-import ImprovedCard from "./Components/ImprovedCard"
-
-// Icons
 import Time from './Pages/Time';
 import Status from './Pages/Status';
 import Humidity from './Pages/Humidity';
@@ -13,8 +10,9 @@ import Temperature from './Pages/Temperature';
 import Tasks, { type Task } from './Pages/Tasks';
 import Uptime from './Pages/Uptime';
 import LoadingElement from './Components/Loading';
+import TaskDuration from './Pages/TaskDuration';
 
-export const STA_MODE: boolean = true;
+export const STA_MODE: boolean = false;
 
 export const STA_IP: string = STA_MODE ? "172.30.4.186" : "192.168.4.1"; 
 // const STA_IP: string = "192.168.4.1"; 
@@ -43,8 +41,10 @@ function App() {
   const [temp, setTemp] = useState<number>(37.3);
   const [hum, setHum] = useState<number>(50);
   const [uptime, setUptime] = useState<string>("");
+  const [taskDuration, setTaskDuration] = useState<number>(-1);
 
-  const [loaded, setLoading] = useState<boolean>(true);
+  // TODO
+  const [loaded, setLoading] = useState<boolean>(false);
 
   const [timestamp, setTimestamp] = useState(new Date());
 
@@ -137,8 +137,7 @@ function App() {
       {
         !loaded
         ?
-        // <LoadingElement/>
-        <></>
+        <LoadingElement/>
         :
         <>
           <Heading color="black" fontSize={30} mb={20}>HydroFlow Dashboard</Heading>
@@ -152,7 +151,8 @@ function App() {
           <br/>
 
           <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
-            <Tasks tasks={tasks} setTasks={setTasks} ForceTask={ForceTask}/>
+            <Tasks tasks={tasks} setTasks={setTasks} ForceTask={ForceTask} taskDuration={taskDuration}/>
+            <TaskDuration setTaskDuration={setTaskDuration} taskDuration={taskDuration}/>
             <Temperature data={data_temp} temp={temp}/>
             <Humidity data={data_hum} hum={hum}/>
           </SimpleGrid>
