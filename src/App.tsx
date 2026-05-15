@@ -12,6 +12,10 @@ import Uptime from './Pages/Uptime';
 import LoadingElement from './Components/Loading';
 import TaskDuration from './Pages/TaskDuration';
 
+import { LocalNotifications } from '@capacitor/local-notifications';
+import { SocketClose, SocketSetup } from './socketManager';
+import { SetupNotifications } from './notifications';
+
 export const STA_MODE: boolean = true;
 
 export const STA_IP: string = STA_MODE ? "172.30.4.186" : "192.168.4.1"; 
@@ -35,6 +39,7 @@ export function createTask(hour: number, minute: number): Task {
 
   return t;
 }
+
 function App() {
   const [status, setStatus] = useState<boolean>(true);
   const [tasks, setTasks] = useState<Array<Task>>([]);
@@ -123,12 +128,13 @@ function App() {
   }
 
   useEffect(() => {
+    SetupNotifications();
+    SocketSetup();
+    
     GetTasksFromESP();
-
     SendLocalTimeToESP();   
 
-    // TODO: GetUptime();
-    return () => { setTasks([]); setTemp(0); setHum(0); setUptime(""); setLoading(false) }
+    return () => { SocketClose(); setTasks([]); setTemp(0); setHum(0); setUptime(""); setLoading(false) }
   }, []);
   const [time, setTime] = useState("12:00");
 
