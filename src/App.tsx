@@ -12,7 +12,7 @@ import Uptime from './Pages/Uptime';
 import LoadingElement from './Components/Loading';
 import TaskDuration from './Pages/TaskDuration';
 
-export const STA_MODE: boolean = false;
+export const STA_MODE: boolean = true;
 
 export const STA_IP: string = STA_MODE ? "172.30.4.186" : "192.168.4.1"; 
 // const STA_IP: string = "192.168.4.1"; 
@@ -44,7 +44,7 @@ function App() {
   const [taskDuration, setTaskDuration] = useState<number>(-1);
 
   // TODO
-  const [loaded, setLoading] = useState<boolean>(false);
+  const [loaded, setLoading] = useState<boolean>(true);
 
   const [timestamp, setTimestamp] = useState(new Date());
 
