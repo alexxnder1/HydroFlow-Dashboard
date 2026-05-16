@@ -21,22 +21,13 @@ const Status = ({tasks, status, setStatus}) => {
   });
 
   return (
-    <>
-      {
-        closestTaskString.length == 0
-        ?
-          <LoadingElement/>
-        :
-        <ImprovedCard
-              title="Status" description={status == true ? `Urmatorul task in ${closestTaskString}` : "Idle"}
-              buttonColor={status == true ? "red" : "green"}  color={status == false ? "red" : "green"}  
-              buttonText={status == false ? "Start" : "Idle"}
-              onClick={() => setStatus(!status)}
-              icon={status==false ? <CloseIcon sx={{ fontSize: 40 }}/> : <CheckIcon sx={{ fontSize: 40 }}/>}
-        />
-
-      }
-    </>
+      <ImprovedCard
+            title="Status" description={status == true ? (closestTaskString == "" ? "Nu exista niciun task" : `Urmatorul task in ${closestTaskString}`) : "Idle"}
+            buttonColor={status == true ? "red" : "green"}  color={status == false ? "red" : "green"}  
+            buttonText={status == false ? "Start" : "Idle"}
+            onClick={() => setStatus(!status)}a
+            icon={status==false ? <CloseIcon sx={{ fontSize: 40 }}/> : <CheckIcon sx={{ fontSize: 40 }}/>}
+      />
   );
 
 };

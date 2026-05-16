@@ -1,6 +1,6 @@
 import ImprovedCard from "../Components/ImprovedCard";
 import TimelapseIcon from '@mui/icons-material/Timelapse';
-import { Slider } from "@chakra-ui/react"
+import { Box, Slider } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
 import { STA_IP } from "../App";
 import LoadingElement from "../Components/Loading";
@@ -8,24 +8,25 @@ import LoadingElement from "../Components/Loading";
 const TaskDuration = ({taskDuration, setTaskDuration}) => {
     const Content = () => {    
         return (
-            <>
+            <Box>
                 <br/>
                 {
                     taskDuration == -1
                     ?
                     <LoadingElement/>
                     :
-                    <Slider.Root colorPalette="purple" defaultValue={[taskDuration]} onValueChange={(e) => setTaskDuration(e.value[0])} min={1} max={100}>
-                        <Slider.Label fontSize={'xl'}>All tasks span: {taskDuration} minutes</Slider.Label>
+                    <Slider.Root gap={5} colorPalette="purple" value={[taskDuration]} onValueChange={(e) => setTaskDuration(e.value[0])} min={1} max={100}>
+                        <Slider.Label  fontSize={'xl'}>All tasks span: {taskDuration} minutes</Slider.Label>
                         <Slider.Control>
-                            <Slider.Track>
+                            <Slider.Track h={'30px'}>
                                 <Slider.Range  />
                             </Slider.Track>
-                            <Slider.Thumb index={0} />
+                            <Slider.Thumb cursor="grab" 
+                                _active={{ cursor: "grabbing" }} h={'50px'} borderRadius={0} index={0} />
                         </Slider.Control>
                     </Slider.Root>
                 }
-            </>
+            </Box>
         )
     }
   useEffect(() => {

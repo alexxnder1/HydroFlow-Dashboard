@@ -1,4 +1,4 @@
-import { Box, Heading, Text, SimpleGrid, Button, Spinner, Center, AbsoluteCenter, Input } from '@chakra-ui/react'
+import { Box, Heading,HStack,Image,SimpleGrid,Text } from '@chakra-ui/react'
 
 import { useEffect, useState } from "react";
 
@@ -9,17 +9,15 @@ import Humidity from './Pages/Humidity';
 import Temperature from './Pages/Temperature';
 import Tasks, { type Task } from './Pages/Tasks';
 import Uptime from './Pages/Uptime';
-import LoadingElement from './Components/Loading';
 import TaskDuration from './Pages/TaskDuration';
 
-import { LocalNotifications } from '@capacitor/local-notifications';
 import { SocketClose, SocketSetup } from './socketManager';
 import { SetupNotifications } from './notifications';
 import IntroScreen from './Components/IntroScreen';
 
-export const STA_MODE: boolean = true;
+export const STA_MODE: boolean = false;
 
-export const STA_IP: string = STA_MODE ? "172.30.4.186" : "192.168.4.1"; 
+export const STA_IP: string = STA_MODE ? "172.30.4.186" : "192.168.0.142"; 
 // const STA_IP: string = "192.168.4.1"; 
 export function createTask(hour: number, minute: number): Task {
   const today = new Date();
@@ -146,7 +144,13 @@ function App() {
         <IntroScreen/>
         :
         <>
-          <Heading color="black" fontSize={30} mb={20}>HydroFlow Dashboard</Heading>
+          <HStack gap={5}>
+            <Image w={"65px"} h={"80px"} objectFit={"fill"} src="./logo_large.png" />
+            <Text color={"blue.700"} fontSize={"2xl"} fontWeight={"bold"}>
+              HydroFlow
+            </Text>
+          </HStack>
+          <Text color="black" fontSize={30} mt={10} mb={7}>Panou de Control</Text>
           
           <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
             <Time timestamp={timestamp} setTimestamp={setTimestamp}/>

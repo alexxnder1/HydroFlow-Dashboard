@@ -2,7 +2,7 @@ import { Box, Button, Card, CardBody, CardFooter } from "@chakra-ui/react";
 
 const ImprovedCard = (props: any) => {
     return (
-        <Card.Root backgroundColor="#ffffff" border={`2px solid ${props.color}`} >
+        <Card.Root backgroundColor="#ffffff" border={`3.5px solid ${props.color}`} >
           <CardBody gap="2">
             {props.icon} 
             <Card.Title color="black" mt="5" fontSize={30}>{props.title}</Card.Title>
