@@ -1,4 +1,4 @@
-import { AbsoluteCenter, Flex, Spinner } from "@chakra-ui/react";
+import { Text, Flex, Spinner } from "@chakra-ui/react";
 
 const LoadingElement = () => {
     return (
@@ -7,9 +7,18 @@ const LoadingElement = () => {
             justify="center" 
             width="100%" 
             height="100%" 
-            minH="100px" // Previne colapsarea dacă părintele e gol
+            direction="column"
+            gap={8}
+            minH="100px" 
             >
-            <Spinner size="xl" color="blue.500" />
+                <Spinner 
+                    size="xl" 
+                    css={{ "--spinner-track-color": "rgba(0,0,0,0.1)" }} 
+                    borderWidth="6px" 
+                    animationDuration='0.7s' 
+                    color="blue.700" 
+                />
+            <Text fontSize={'xl'} fontWeight={'bold'} opacity={0.4}>Asteapta...</Text>
         </Flex>
     )
 };

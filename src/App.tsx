@@ -15,6 +15,7 @@ import TaskDuration from './Pages/TaskDuration';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { SocketClose, SocketSetup } from './socketManager';
 import { SetupNotifications } from './notifications';
+import IntroScreen from './Components/IntroScreen';
 
 export const STA_MODE: boolean = true;
 
@@ -49,7 +50,7 @@ function App() {
   const [taskDuration, setTaskDuration] = useState<number>(-1);
 
   // TODO
-  const [loaded, setLoading] = useState<boolean>(true);
+  const [loaded, setLoading] = useState<boolean>(false);
 
   const [timestamp, setTimestamp] = useState(new Date());
 
@@ -136,14 +137,13 @@ function App() {
 
     return () => { SocketClose(); setTasks([]); setTemp(0); setHum(0); setUptime(""); setLoading(false) }
   }, []);
-  const [time, setTime] = useState("12:00");
 
   return (
     <Box p={8} minH="100vh" backgroundColor="#c8cfe3">
       {
         !loaded
         ?
-        <LoadingElement/>
+        <IntroScreen/>
         :
         <>
           <Heading color="black" fontSize={30} mb={20}>HydroFlow Dashboard</Heading>

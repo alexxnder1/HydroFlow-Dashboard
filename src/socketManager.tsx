@@ -30,9 +30,9 @@ export function SocketSetup()
         {
           const notifJson = data.replace("[NOTIFICATION]", "").trim();
           try {
-                var notification = JSON.parse(notifJson) as Notification;
-                SendNotification(notification);
-                console.log("Notification sent to system!");
+              var notification = JSON.parse(notifJson) as Notification;
+              SendNotification(notification);
+              console.log("Notification sent to system!");
           } catch (error) {
               console.error("Error schedule:", error);
         }
