@@ -12,7 +12,7 @@ const Time = ({timestamp, setTimestamp}) => {
   
   return (
     <ImprovedCard
-          title="Time" description={`${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`}
+          title="Ora" description={`${String(timestamp.getHours()).padStart(2, "0")}:${String(timestamp.getMinutes()).padStart(2, "0")}`}
           color="white" 
           icon={<AccessTimeFilledIcon sx={{ fontSize: 40 }}/>}
     />

@@ -128,7 +128,7 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
                             }
                         }}
                     >
-                        Add Task
+                        Adauga Task
                     </Button>
                 </Box>
                 
@@ -137,7 +137,7 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
                     color="whiteAlpha.800" 
                     onClick={() => setAddTaskMenu(false)}
                 >
-                    Cancel
+                    Anuleaza
                 </Button>
             </VStack>
         </Box>

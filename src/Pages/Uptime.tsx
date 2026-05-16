@@ -60,7 +60,7 @@ const GetFormattedString = (since: number) => {
     return formattedParts.join(" ");
   };
 
-  const [loaded, setLoaded] = useState<boolean>(STA_MODE ? true : false);
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [uptimeString, setUptimeString] = useState("");
   
   
@@ -93,7 +93,7 @@ const GetFormattedString = (since: number) => {
         loaded
         ?
           <ImprovedCard
-                title="Uptime" description={`${uptimeString}`}
+                title="Timp de Functionare" description={`${uptimeString}`}
                 color="DarkTurquoise" 
                 icon={<HourglassEmptyIcon sx={{ fontSize: 40 }}/>}
           />

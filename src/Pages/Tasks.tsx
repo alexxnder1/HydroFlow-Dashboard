@@ -188,7 +188,7 @@ const Tasks = ({tasks, setTasks, ForceTask, taskDuration}) => {
                       <Text color={IsNextTask(t) ? "green" : "gray"} position={"absolute"} top={50} fontSize={25}>{String(t.hour).padStart(2,"0")}:{String(t.minute).padStart(2,"0")}</Text>
                       <Box w="12px" h="12px" borderRadius="full" border="10px  solid" borderColor={'blue'}/> 
                      
-                      <Button onClick={() => {IsTaskRunning(t) ? StopTask(t) : DeleteTask(t)}} color="white" marginTop={2} bg={IsTaskRunning(t) ? "red.500" : 'gray.500'} fontSize={15}>{IsTaskRunning(t) ? "Stop" : "Delete"}</Button>
+                      <Button onClick={() => {IsTaskRunning(t) ? StopTask(t) : DeleteTask(t)}} color="white" marginTop={2} bg={IsTaskRunning(t) ? "red.500" : 'gray.500'} fontSize={15}>{IsTaskRunning(t) ? "Stop" : "Sterge"}</Button>
                     </VStack>
                 )
               })
@@ -197,11 +197,11 @@ const Tasks = ({tasks, setTasks, ForceTask, taskDuration}) => {
         </Box>
         }
         buttonColor={color}  color={color}
-        buttonText="Force Task"
+        buttonText="Forteaza Task"
         onClick={() => {ForceTask()}}
 
         secondButtonColor={"#0039d6"}  secondColor={color}
-        secondButtonText="Add Task"
+        secondButtonText="Adauga Task"
         secondOnClick={() => {setAddTaskMenu(true)}}
         
         icon={<AssignmentLateIcon sx={{ fontSize: 40 }}/>}

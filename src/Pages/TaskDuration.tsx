@@ -57,7 +57,7 @@ const TaskDuration = ({taskDuration, setTaskDuration}) => {
 
     return (
         <ImprovedCard
-          title="Time" description={'Select Task Duration'}
+          title="Durata" description={'Seteaza durata task-ului'}
           color="purple" 
           icon={<TimelapseIcon sx={{ fontSize: 40 }}/>}
           content={<Content/>}
