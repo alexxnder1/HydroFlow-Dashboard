@@ -145,7 +145,7 @@ function App() {
         :
         <>
           <HStack gap={5}>
-            <Image w={"65px"} h={"80px"} objectFit={"fill"} src="./logo_large.png" />
+            {/* <Image w={"65px"} h={"80px"} objectFit={"fill"} src="./logo_large.png" /> */}
             <Text color={"blue.700"} fontSize={"2xl"} fontWeight={"bold"}>
               HydroFlow
             </Text>
