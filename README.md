@@ -1,5 +1,5 @@
 <center>
-  <img src="./public/logo.png" width="200" height="200"/>
+  <img src="./public/logo.png" width="200" height="auto"/>
   <h2> React+Capacitor+Chakra-UI App for an awesome <a href="https://github.com/alexxnder1/HydroFlow-ESP32">Smart Irrigation System</a>.</h2>
   <p>HydroFlow is an amazing IoT-Based Smart Irrigation System that can distrubte a large volume of water for your garden needs.
   </p>
