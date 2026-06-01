@@ -137,35 +137,38 @@ function App() {
   }, []);
 
   return (
-    <Box p={8} minH="100vh" backgroundColor="#c8cfe3">
+    <Box p={0} minH="100vh" backgroundColor='#09122C'>
       {
         !loaded
         ?
         <IntroScreen/>
         :
         <>
-          <HStack gap={5}>
-            {/* <Image w={"65px"} h={"80px"} objectFit={"fill"} src="./logo_large.png" /> */}
-            <Text color={"blue.700"} fontSize={"2xl"} fontWeight={"bold"}>
+          <HStack gap={5} marginLeft={-8} id="top" style={{display: "flex", justifyContent:"center"}} backgroundColor={"#093C5D"}>
+            <Image w={"95px"} h={"85px"}  src="./logo_large.png" />
+            <Text color={"#1DCD9F"}  fontFamily={"DoHyeon"} fontSize={"40px"}>
               HydroFlow
             </Text>
           </HStack>
-          <Text color="black" fontSize={30} mt={10} mb={7}>Panou de Control</Text>
-          
-          <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
-            <Time timestamp={timestamp} setTimestamp={setTimestamp}/>
-            <Status tasks={tasks} status={status} setStatus={setStatus}/>
-            <Uptime uptime={uptime} setUptime={setUptime}/>
-          </SimpleGrid>
 
-          <br/>
+          <Box p={8} id="content">
+            <Text color="#36ADA3" fontWeight={"bold"} fontSize={30} mt={10} mb={7}>Panou de Control</Text>
+            
+            <SimpleGrid columns={{ base: 1, md: 3 }} gap={5}>
+              <Time timestamp={timestamp} setTimestamp={setTimestamp}/>
+              <Status tasks={tasks} status={status} setStatus={setStatus}/>
+              <Uptime uptime={uptime} setUptime={setUptime}/>
+            </SimpleGrid>
 
-          <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
-            <Tasks tasks={tasks} setTasks={setTasks} ForceTask={ForceTask} taskDuration={taskDuration}/>
-            <TaskDuration setTaskDuration={setTaskDuration} taskDuration={taskDuration}/>
-            <Temperature data={data_temp} temp={temp}/>
-            <Humidity data={data_hum} hum={hum}/>
-          </SimpleGrid>
+            <br/>
+
+            <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
+              <Tasks tasks={tasks} setTasks={setTasks} ForceTask={ForceTask} taskDuration={taskDuration}/>
+              <TaskDuration setTaskDuration={setTaskDuration} taskDuration={taskDuration}/>
+              <Temperature data={data_temp} temp={temp}/>
+              <Humidity data={data_hum} hum={hum}/>
+            </SimpleGrid>
+          </Box>
         </>
       }
     </Box>

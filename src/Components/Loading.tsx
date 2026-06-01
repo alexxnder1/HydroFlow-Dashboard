@@ -18,7 +18,7 @@ const LoadingElement = () => {
                     animationDuration='0.7s' 
                     color="blue.700" 
                 />
-            <Text fontSize={'xl'} fontWeight={'bold'} opacity={0.4}>Asteapta...</Text>
+            <Text color={"white"} fontSize={'xl'} fontWeight={'bold'} opacity={0.4}>Asteapta...</Text>
         </Flex>
     )
 };
