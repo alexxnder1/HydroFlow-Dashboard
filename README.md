@@ -9,6 +9,8 @@
   <img src="./public/s2.jpg" style="width: 200px; height: auto;">
   <img src="./public/s3.jpg" style="width: 200px; height: auto;">
   <img src="./public/s4.jpg" style="width: 200px; height: auto;">
+  <img src="./public/s5.jpg" style="width: 200px; height: auto;">
+
 </div>
 
 </center>
