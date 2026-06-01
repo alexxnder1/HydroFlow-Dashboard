@@ -4,9 +4,11 @@
   <p>HydroFlow is an amazing IoT-Based Smart Irrigation System that can distrubte a large volume of water for your garden needs.
   </p>
   <p>Uses Gradle in order to be deployed on Android devices.</p>
-  <img src="./public/s1.jpg"/ style="width: 50px; height: auto;">
-  <img src="./public/s2.jpg"/ style="width: 50px; height: auto;">
-  <img src="./public/s3.jpg"/ style="width: 50px; height: auto;">
-  <img src="./public/s4.jpg"/ style="width: 50px; height: auto;">
+<div style="display: flex; gap: 10px;">
+  <img src="./public/s1.jpg" style="width: 150px; height: auto;">
+  <img src="./public/s2.jpg" style="width: 150px; height: auto;">
+  <img src="./public/s3.jpg" style="width: 150px; height: auto;">
+  <img src="./public/s4.jpg" style="width: 150px; height: auto;">
+</div>
 
 </center>
