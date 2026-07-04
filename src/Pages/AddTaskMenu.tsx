@@ -16,7 +16,7 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
             console.error("Undefined Task.");
             return;
         }
- 
+
         await fetch(`http://${STA_IP}/add_task`, {
             method: "POST",
             headers: {
@@ -41,8 +41,8 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
             .catch((err) => {
                 console.error("ERR: ", err);
             });
-    };  
-    
+    };
+
     return (
         <Box
             position="fixed"
@@ -71,7 +71,7 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
                 </Text>
 
                 <Box position="relative" width="100%" h="50px">
-                    
+
                     <Box
                         position="absolute"
                         top={0}
@@ -88,8 +88,8 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
                         border="1px solid #ccc"
                     >
                         <Text color="black" fontSize="18px">
-                            {task 
-                                ? `${String(task.hour).padStart(2, "0")}:${String(task.minute).padStart(2, "0")}` 
+                            {task
+                                ? `${String(task.hour).padStart(2, "0")}:${String(task.minute).padStart(2, "0")}`
                                 : "--:--"}
                         </Text>
                         <Text fontSize="20px">🕒</Text>
@@ -109,8 +109,8 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
                         width="100%"
                         height="100%"
                         opacity={0}
-                        zIndex={2}  
-                        style={{ 
+                        zIndex={2}
+                        style={{
                             WebkitAppearance: "none",
                             cursor: "pointer"
                         }}
@@ -131,10 +131,10 @@ const AddTaskMenu = ({setTasks, setAddTaskMenu}) => {
                         Adauga Task
                     </Button>
                 </Box>
-                
-                <Button 
-                    variant="ghost" 
-                    color="whiteAlpha.800" 
+
+                <Button
+                    variant="ghost"
+                    color="whiteAlpha.800"
                     onClick={() => setAddTaskMenu(false)}
                 >
                     Anuleaza

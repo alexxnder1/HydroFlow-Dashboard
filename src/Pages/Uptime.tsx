@@ -53,8 +53,8 @@ const GetFormattedString = (since: number) => {
     if (ft.hours > 0) parts.push(`${ft.hours} hours`);
     if (ft.minutes > 0) parts.push(`${ft.minutes} minutes`);
     const formattedParts = parts.map((part, index) => {
-      if (index === parts.length - 1) return part; 
-      return part.replace(/\b(\w+s)\b/gi, '$1,');   
+      if (index === parts.length - 1) return part;
+      return part.replace(/\b(\w+s)\b/gi, '$1,');
     });
 
     return formattedParts.join(" ");
@@ -62,12 +62,12 @@ const GetFormattedString = (since: number) => {
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [uptimeString, setUptimeString] = useState("");
-  
-  
+
+
   useEffect(() => {
     var timer: any = null;
     const fetchData = async() => {
-      var request = `http://${STA_IP}/get_uptime`;
+      var request = `http://${STA_IP}/  `;
       await fetch(request)
         .then((response) => {
             if(!response.ok)
@@ -94,14 +94,14 @@ const GetFormattedString = (since: number) => {
         ?
           <ImprovedCard
                 title="Timp de Functionare" description={`${uptimeString}`}
-                color="DarkTurquoise" 
+                color="DarkTurquoise"
                 icon={<HourglassEmptyIcon sx={{ fontSize: 40 }}/>}
           />
         :
         <LoadingElement/>
       }
     </>
-  )  
+  )
 };
 
 export default Uptime;
