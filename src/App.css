@@ -1,0 +1,33 @@
+@keyframes sidebarOpen {
+  0% { margin-left: -800px; }
+  100% { margin-left: 0px; }
+}
+
+@keyframes sidebarClose {
+  100% { margin-left: -800px;position; }
+  0% { margin-left: 0px; }
+}
+
+
+@keyframes btnRotating {
+  100% { transform: rotate(180deg); }
+  0% { transform: rotate(0deg); }
+}
+
+
+#sidebar-button {
+  animation: btnRotating 0.5s linear;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/*
+#content {
+  animation: fade 0.5s forwards;
+} */

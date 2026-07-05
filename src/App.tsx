@@ -2,6 +2,8 @@ import { Box, HStack, MenuIndicator, SimpleGrid,Text } from '@chakra-ui/react'
 
 import { useEffect, useState } from "react";
 
+import './App.css'
+
 // Components
 import Time from './Pages/Time';
 import Status from './Pages/Status';
@@ -57,6 +59,7 @@ function App() {
   const [uptime, setUptime] = useState<string>("");
   const [taskDuration, setTaskDuration] = useState<number>(-1);
   const [menu, setMenu] = useState<Menu>(Menu.ControlPanel);
+  const [sidebar, setSidebar] = useState<boolean>(true);
   const isMobile = useIsMobile();
 
   // TODO
@@ -148,45 +151,45 @@ function App() {
     return () => { SocketClose(); setTasks([]); setTemp(0); setHum(0); setUptime(""); setLoading(false) }
   }, []);
 
-  const ControlPanel = () => {
+  const ControlPanel = ({id}) => {
     return (
-        <SimpleGrid columns={{ base: 1, md: 3}} gap={5}>
+        <SimpleGrid id={id} columns={{ base: 1, md: 3}} gap={5}>
           <Time timestamp={timestamp} setTimestamp={setTimestamp}/>
           <Status tasks={tasks} status={status} setStatus={setStatus}/>
-          <Uptime uptime={uptime} setUptime={setUptime}/>
+          {/* <Uptime uptime={uptime} setUptime={setUptime}/> */}
         </SimpleGrid>
     )
   };
 
-  const Stats = () => {
+  const Stats = ({id}) => {
     return (
 
-      <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
+      <SimpleGrid id={id} columns={{ base: 1, md: 1 }} gap={5}>
         <Weather/>
       </SimpleGrid>
     )
   };
 
-  const TasksPanel = () => {
+  const TasksPanel = ({id}) => {
     return(
-      <SimpleGrid columns={{ base: 1, md: 1 }} gap={5}>
+      <SimpleGrid id={id} columns={{ base: 1, md: 1 }} gap={5}>
         <Tasks tasks={tasks} setTasks={setTasks} ForceTask={ForceTask} taskDuration={taskDuration}/>
         <TaskDuration setTaskDuration={setTaskDuration} taskDuration={taskDuration}/>
       </SimpleGrid>
     )
   };
 
-  const ConditionalRendering = () => {
+  const ConditionalRendering = ({id}) => {
     switch(menu)
     {
       case Menu.ControlPanel:
-        return <ControlPanel/>
+        return <ControlPanel id={id}/>
 
       case Menu.Stats:
-        return <Stats/>
+        return <Stats id={id}/>
 
       case Menu.Tasks:
-        return <TasksPanel/>
+        return <TasksPanel id={id}/>
     }
   };
   return (
@@ -197,11 +200,11 @@ function App() {
         <IntroScreen/>
         :
         <HStack >
-          <Sidebar menu={menu} setMenu={setMenu} />
+          <Sidebar sidebar={sidebar} setSidebar={setSidebar} menu={menu} setMenu={setMenu} />
 
-          <Box p={8} id="content" w="100vw" h="100vh" overflowY={"auto"}>
-              <Text fontWeight={"bold"} fontSize={25} pl={10}  mb={7}>{names.at(menu)}</Text>
-              <ConditionalRendering/>
+          <Box p={8} id="box-content" w="100vw" h="100vh" overflowY={"auto"} ml={(!isMobile && !sidebar) && '400px'}>
+              <Text fontWeight={"bold"} fontSize={25} pl={!isMobile ? (!sidebar ? 10:  0) : 10}  mb={7}>{names.at(menu)}</Text>
+              <ConditionalRendering id="content"/>
           </Box>
         </HStack>
       }

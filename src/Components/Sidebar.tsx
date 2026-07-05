@@ -1,9 +1,12 @@
+import '../App.css'
+
 import { Box, Button, Image, Text, VStack } from '@chakra-ui/react'
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import SidebarInfo from './SidebarInfo';
 import { Menu, names } from '../App';
 import { useMediaQuery } from "@chakra-ui/react";
+
 
 // icons
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
@@ -15,8 +18,7 @@ export const useIsMobile = () => {
   return isMobile;
 };
 
-const Sidebar = ({menu, setMenu}) => {
-  const [sidebar, setSidebar] = useState<boolean>(true);
+const Sidebar = ({sidebar, setSidebar, menu, setMenu}) => {
   const [hover, setHover] = useState<Menu>();
   const isMobile = useIsMobile();
 
@@ -46,7 +48,8 @@ const Sidebar = ({menu, setMenu}) => {
   return (
     <>
     <Button
-      transition="transform 0.5s ease"
+      id="sidebar-button"
+      transition="transform 0.5s"
       transform={sidebar ? "rotate(180deg)" : "rotate(0deg)"}
       style={{
           borderRadius: "15px",
@@ -55,19 +58,22 @@ const Sidebar = ({menu, setMenu}) => {
           top: 30, left: 20,
           zIndex:999999,
           height:"50px"
-        }} onClick={() => changeSidebarState()}>
+        }} onClick={() => {
+          if(isMobile)
+            changeSidebarState();
+        }}>
           <MenuIcon style={{ pointerEvents: "none"}}/>
       </Button>
     {
-      sidebar &&
       <VStack
         gap={5}
         padding={5}
-        id="top"
+        id="sidebar"
         w={isMobile ? "100vw" : "20vw" }
         zIndex={99999}
         h="100vh"
         opacity={isMobile && "0.97"}
+        animation={`${sidebar ? 'sidebarOpen' : 'sidebarClose'} 0.5s forwards`}
         position= {isMobile ? "fixed" :  "sticky" }
         // top={0}
         backgroundColor="#093C5D"
