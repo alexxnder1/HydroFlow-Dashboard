@@ -1,16 +1,20 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 const WeatherWidget = () => {
 
+
+    const tryToGetWidget = (id) => {
+      const script = document.createElement("script");
+      script.id = id;
+      script.src = "https://weatherwidget.io/js/widget.min.js";
+      document.body.appendChild(script);
+    };
+
     useEffect(() => {
       const id = "weatherwidget-io-js";
-      if (!document.getElementById(id)) {
-        const script = document.createElement("script");
-        script.id = id;
-        script.src = "https://weatherwidget.io/js/widget.min.js";
-        document.body.appendChild(script);
-      } else {
-      }
+      if (!document.getElementById(id)) tryToGetWidget(id);
+       else  tryToGetWidget(id);
+
     }, []);
 
     return (

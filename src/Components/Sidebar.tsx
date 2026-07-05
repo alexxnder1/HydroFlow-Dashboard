@@ -55,7 +55,7 @@ const Sidebar = ({sidebar, setSidebar, menu, setMenu}) => {
           borderRadius: "15px",
           width: "50px",
           position:"absolute",
-          top: 30, left: 20,
+          top: 25, left: 15,
           zIndex:999999,
           height:"50px"
         }} onClick={() => {
