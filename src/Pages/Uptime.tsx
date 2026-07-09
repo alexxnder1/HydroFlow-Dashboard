@@ -65,9 +65,10 @@ const GetFormattedString = (since: number) => {
 
 
   useEffect(() => {
+    console.log("rerender")
     var timer: any = null;
     const fetchData = async() => {
-      var request = `http://${STA_IP}/  `;
+      var request = `http://${STA_IP}/get_uptime`;
       await fetch(request)
         .then((response) => {
             if(!response.ok)
