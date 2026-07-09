@@ -1,4 +1,4 @@
-import { Box, HStack, MenuIndicator, SimpleGrid,Text } from '@chakra-ui/react'
+import { Box, HStack, MenuIndicator, SimpleGrid,Text, VStack } from '@chakra-ui/react'
 
 import { useEffect, useState } from "react";
 
@@ -18,6 +18,8 @@ import WeatherWidget from './Components/WeatherWidget';
 import Weather from './Pages/Weather';
 import { ThemeColors } from './theme';
 import Sidebar, { useIsMobile } from './Components/Sidebar';
+
+import WifiPasswordIcon from '@mui/icons-material/WifiPassword';
 
 export const STA_MODE: boolean =  false;
 
@@ -49,7 +51,7 @@ export enum Menu {
   Tasks
 }
 
-export const names: Array<string> = ["Panoul de control", "Stats", "Tasks"];
+export const names: Array<string> = ["Generale", "Stats", "Tasks"];
 
 function App() {
   const [status, setStatus] = useState<boolean>(true);
@@ -156,7 +158,7 @@ function App() {
         <SimpleGrid id={id} columns={{ base: 1, md: 3}} gap={5}>
           <Time timestamp={timestamp} setTimestamp={setTimestamp}/>
           <Status tasks={tasks} status={status} setStatus={setStatus}/>
-          {/* <Uptime uptime={uptime} setUptime={setUptime}/> */}
+          <Uptime uptime={uptime} setUptime={setUptime}/>
         </SimpleGrid>
     )
   };
@@ -200,10 +202,20 @@ function App() {
         <IntroScreen/>
         :
         <HStack >
+
           <Sidebar sidebar={sidebar} setSidebar={setSidebar} menu={menu} setMenu={setMenu} />
 
+          {/* <HStack style={{position: "absolute", top: 40, right:40}}>
+            <WifiPasswordIcon/>
+            <Text>Da</Text>
+          </HStack> */}
+
+
           <Box p={8} id="box-content" w="100vw" h="100vh" overflowY={"auto"} ml={(!isMobile && !sidebar) && '400px'}>
-              <Text fontWeight={"bold"} fontSize={25} pl={!isMobile ? (!sidebar ? 10:  0) : 10}  mb={7}>{names.at(menu)}</Text>
+              <Text fontWeight={"bold"} fontSize={25} pl={!isMobile ? (!sidebar ? 15:  0) : 10}  mb={7} position="fixed">{names.at(menu)}</Text>
+              <br/>
+              <br/>
+              <br/>
               <ConditionalRendering id="content"/>
           </Box>
         </HStack>

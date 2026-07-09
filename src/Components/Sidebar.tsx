@@ -1,6 +1,6 @@
 import '../App.css'
 
-import { Box, Button, Image, Text, VStack } from '@chakra-ui/react'
+import { Box, Button, HStack, Image, Text, VStack } from '@chakra-ui/react'
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import SidebarInfo from './SidebarInfo';
@@ -12,6 +12,7 @@ import { useMediaQuery } from "@chakra-ui/react";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import CircleIcon from '@mui/icons-material/Circle';
 
 export const useIsMobile = () => {
   const [isMobile] = useMediaQuery(["(max-width: 973px)"]);
@@ -55,7 +56,7 @@ const Sidebar = ({sidebar, setSidebar, menu, setMenu}) => {
           borderRadius: "15px",
           width: "50px",
           position:"absolute",
-          top: 25, left: 15,
+          top: 25, left: 20,
           zIndex:999999,
           height:"50px"
         }} onClick={() => {
@@ -85,9 +86,14 @@ const Sidebar = ({sidebar, setSidebar, menu, setMenu}) => {
 
       >
       <Image w={"95px"} h={"85px"}  src="./logo_large.png" />
-          <Text color={"#1DCD9F"}  fontFamily={"DoHyeon"} fontSize={"25px"}>
-            HydroFlow
-        </Text>
+      <Text color={"#1DCD9F"}  fontFamily={"DoHyeon"} fontSize={"25px"}>
+        HydroFlow
+      </Text>
+
+      <HStack style={{color:"green"}}>
+        <CircleIcon/>
+        <Text>Connected</Text>
+      </HStack>
 
 
       <VStack w="100%" pt={10} pb={10}>
